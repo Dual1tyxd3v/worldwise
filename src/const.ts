@@ -8,3 +8,5 @@ export enum APP_ROUTE {
   COUNTRIES = 'countries',
   FORM = 'form'
 }
+
+export const API_URL = 'http://localhost:9111/cities';
