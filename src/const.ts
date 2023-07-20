@@ -1,5 +1,7 @@
 export enum APP_ROUTE {
   MAIN = '/',
   PRODUCT = '/product',
-  PRICING = '/pricing'
+  PRICING = '/pricing',
+  APP = '/app',
+  LOGIN = '/login'
 }
