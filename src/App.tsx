@@ -7,8 +7,6 @@ import Homepage from './pages/Homepage';
 import Login from './pages/Login';
 import AppLayout from './pages/AppLayout';
 
-// import AppLayout from './pages/app-layout/app-layout';
-
 export default function App() {
   return (
     <BrowserRouter>
@@ -17,7 +15,12 @@ export default function App() {
         <Route path={APP_ROUTE.PRODUCT} element={<Product />} />
         <Route path={APP_ROUTE.PRICING} element={<Pricing />} />
         <Route path={APP_ROUTE.LOGIN} element={<Login />} />
-        <Route path={APP_ROUTE.APP} element={<AppLayout />} />
+        <Route path={APP_ROUTE.APP} element={<AppLayout />}>
+          <Route index element={<p>List of cities</p>}/>
+          <Route path={APP_ROUTE.CITIES} element={<p>List of cities</p>}/>
+          <Route path={APP_ROUTE.COUNTRIES} element={<p>List of countries</p>}/>
+          <Route path={APP_ROUTE.FORM} element={<p>Form</p>}/>
+        </Route>
         <Route path="*" element={<PageNotFound />} />
       </Routes>
     </BrowserRouter>

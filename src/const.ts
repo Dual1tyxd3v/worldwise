@@ -3,5 +3,8 @@ export enum APP_ROUTE {
   PRODUCT = '/product',
   PRICING = '/pricing',
   APP = '/app',
-  LOGIN = '/login'
+  LOGIN = '/login',
+  CITIES = 'cities',
+  COUNTRIES = 'countries',
+  FORM = 'form'
 }
