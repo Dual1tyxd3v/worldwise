@@ -12,3 +12,8 @@ export type CityType = {
 }
 
 export type CitiesType = CityType[];
+
+export type CountryType = {
+  country: string;
+  emoji: string;
+}
