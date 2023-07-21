@@ -39,7 +39,7 @@ export default function CitiesProvider({ children }: CitiesProviderProps) {
     fetchCities(API_URL);
   }, []);
 
-  function getCity(id: string) {
+  function getCity(id: number) {
     async function fetchCity(url: string) {
       try {
         setIsLoading(true);
@@ -81,8 +81,32 @@ export default function CitiesProvider({ children }: CitiesProviderProps) {
     }
   }
 
+  async function deleteCity(id: number) {
+    try {
+      setIsLoading(true);
+      await fetch(`${API_URL}/${id}`, {
+        method: 'DELETE',
+      });
+
+      setCities((cities) => cities.filter((city) => city.id !== id));
+    } catch (e) {
+      console.log('Cant delete city');
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
   return (
-    <CitiesContext.Provider value={{ cities, isLoading, currentCity, getCity, uploadCity }}>
+    <CitiesContext.Provider
+      value={{
+        cities,
+        isLoading,
+        currentCity,
+        getCity,
+        uploadCity,
+        deleteCity,
+      }}
+    >
       {children}
     </CitiesContext.Provider>
   );

@@ -22,6 +22,7 @@ export type ContextType = {
   cities: CitiesType;
   isLoading: boolean;
   currentCity: CityType | null;
-  getCity: (id: string) => void;
+  getCity: (id: number) => void;
   uploadCity: (city: CityType) => void;
+  deleteCity: (id: number) => void;
 };
