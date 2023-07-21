@@ -10,4 +10,5 @@ export enum APP_ROUTE {
 }
 
 export const API_URL = 'http://localhost:9111/cities';
+export const CITY_URL = 'https://api.bigdatacloud.net/data/reverse-geocode-client';
  

@@ -1,15 +1,48 @@
-// "https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=0&longitude=0"
-
-import { FormEvent, useState } from 'react';
+import { FormEvent, useEffect, useState } from 'react';
 import styles from './form.module.css';
 import Button from '../button/button';
 import ButtonBack from '../button-back/button-back';
+import { useUrlPosition } from '../../hooks/useUrlPosition';
+import { CITY_URL } from '../../const';
+import Spinner from '../spinner/spinner';
+import Message from '../message/message';
 
 export default function Form() {
   const [cityName, setCityName] = useState('');
   const [country, setCountry] = useState('');
   const [date, setDate] = useState<Date | string>(new Date());
   const [notes, setNotes] = useState('');
+  const [lat, lng] = useUrlPosition();
+  const [isLoadingGeo, setIsLoadingGeo] = useState(false);
+  const [geoError, setGeoError] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function loadCity() {
+      try {
+        setIsLoadingGeo(true);
+        setGeoError(null);
+
+        const resp = await fetch(
+          `${CITY_URL}?latitude=${lat}&longitude=${lng}`
+        );
+        if (!resp.ok) throw new Error('Could not load city');
+        const data = await resp.json();
+        if (!data.countryCode) throw new Error('Please click on a city');
+
+        setCityName(data.city || data.locality);
+        setCountry(data.countryName);
+      } catch (e) {
+        setGeoError((e as Error).message);
+      } finally {
+        setIsLoadingGeo(false);
+      }
+    }
+
+    loadCity();
+  }, [lat, lng]);
+
+  if (isLoadingGeo) return <Spinner />;
+  if (geoError) return <Message message={geoError} />;
 
   function onSubmitHandler(e: FormEvent) {
     e.preventDefault();
@@ -24,7 +57,6 @@ export default function Form() {
           onChange={(e) => setCityName(e.target.value)}
           value={cityName}
         />
-        {/* <span className={styles.flag}>{emoji}</span> */}
       </div>
 
       <div className={styles.row}>

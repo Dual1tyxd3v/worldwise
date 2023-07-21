@@ -17,9 +17,9 @@ import { useOwnContext } from '../../contexts/cities-context';
 import { APP_ROUTE } from '../../const';
 import { useGeolocation } from '../../hooks/useGeolocation';
 import Button from '../button/button';
+import { useUrlPosition } from '../../hooks/useUrlPosition';
 
 export default function Map() {
-  const [searchParams] = useSearchParams();
   const [position, setPosition] = useState<LatLngExpression>([40, 0]);
   const { cities } = useOwnContext();
   const {
@@ -27,9 +27,7 @@ export default function Map() {
     getPosition,
     position: geoPosition,
   } = useGeolocation();
-
-  const lat = searchParams.get('lat');
-  const lng = searchParams.get('lng');
+  const [lat, lng] = useUrlPosition();
 
   useEffect(() => {
     if (lat && lng) setPosition([+lat, +lng]);
