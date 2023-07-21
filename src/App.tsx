@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import Product from './pages/Product';
 import Pricing from './pages/Pricing';
 import PageNotFound from './pages/page-not-found';
@@ -46,7 +46,7 @@ export default function App() {
         <Route path={APP_ROUTE.APP} element={<AppLayout />}>
           <Route
             index
-            element={<CityList cities={cities} isLoading={isLoading} />}
+            element={<Navigate replace to={APP_ROUTE.CITIES} />}
           />
           <Route
             path={APP_ROUTE.CITIES}
