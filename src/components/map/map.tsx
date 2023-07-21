@@ -15,11 +15,18 @@ import { Icon } from 'leaflet';
 import { LatLngExpression } from 'leaflet';
 import { useOwnContext } from '../../contexts/cities-context';
 import { APP_ROUTE } from '../../const';
+import { useGeolocation } from '../../hooks/useGeolocation';
+import Button from '../button/button';
 
 export default function Map() {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const [position, setPosition] = useState<LatLngExpression>([40, 0]);
   const { cities } = useOwnContext();
+  const {
+    isLoading: isLoadingPos,
+    getPosition,
+    position: geoPosition,
+  } = useGeolocation();
 
   const lat = searchParams.get('lat');
   const lng = searchParams.get('lng');
@@ -28,8 +35,15 @@ export default function Map() {
     if (lat && lng) setPosition([+lat, +lng]);
   }, [lat, lng]);
 
+  useEffect(() => {
+    if (geoPosition) setPosition(geoPosition as LatLngExpression);
+  }, [geoPosition]);
+
   return (
     <div className={styles.mapContainer}>
+      {!geoPosition && <Button type="position" onClick={getPosition}>
+        {isLoadingPos ? 'Loading' : 'Use your position'}
+      </Button>}
       <MapContainer
         className={styles.map}
         center={position}
