@@ -3,14 +3,13 @@
 import { FormEvent, useState } from 'react';
 import styles from './form.module.css';
 import Button from '../button/button';
-import { useNavigate } from 'react-router-dom';
+import ButtonBack from '../button-back/button-back';
 
 export default function Form() {
   const [cityName, setCityName] = useState('');
   const [country, setCountry] = useState('');
   const [date, setDate] = useState<Date | string>(new Date());
   const [notes, setNotes] = useState('');
-  const navigate = useNavigate();
 
   function onSubmitHandler(e: FormEvent) {
     e.preventDefault();
@@ -50,7 +49,7 @@ export default function Form() {
         <Button type="primary" onClick={() => console.log(123)}>
           Add
         </Button>
-        <Button type="back" onClick={() => navigate(-1)}>Back</Button>
+        <ButtonBack />
       </div>
     </form>
   );

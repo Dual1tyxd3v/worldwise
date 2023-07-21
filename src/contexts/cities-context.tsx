@@ -1,11 +1,6 @@
 import { ReactNode, createContext, useContext, useEffect, useState } from 'react';
-import { CitiesType } from '../types';
+import { CitiesType, CityType, ContextType } from '../types';
 import { API_URL } from '../const';
-
-type ContextType = {
-  cities: CitiesType;
-  isLoading: boolean;
-}
 
 const CitiesContext = createContext<ContextType | null>(null);
 
@@ -16,6 +11,7 @@ type CitiesProviderProps = {
 export default function CitiesProvider({ children }: CitiesProviderProps) {
   const [cities, setCities] = useState<CitiesType>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [currentCity, setCurrentCity] = useState<CityType | null>(null);
 
   useEffect(() => {
     async function fetchCities(url: string) {
@@ -36,8 +32,28 @@ export default function CitiesProvider({ children }: CitiesProviderProps) {
 
     fetchCities(API_URL);
   }, []);
+
+  function getCity(id: string) {
+    async function fetchCity(url: string) {
+      try {
+        setIsLoading(true);
+        const resp = await fetch(`${url}/${id }`);
+        if (!resp.ok) {
+          throw new TypeError('Could not load data');
+        }
+        const data = await resp.json();
+        setCurrentCity(data);
+      } catch (e) {
+        console.log('Something went wrong');
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    fetchCity(API_URL);
+  }
   return (
-    <CitiesContext.Provider value={{ cities, isLoading }}>
+    <CitiesContext.Provider value={{ cities, isLoading, currentCity, getCity }}>
       {children}
     </CitiesContext.Provider>
   );
