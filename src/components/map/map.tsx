@@ -1,29 +1,39 @@
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import styles from './map.module.css';
-import { APP_ROUTE } from '../../const';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
-import { useState } from 'react';
+import {
+  MapContainer,
+  TileLayer,
+  Marker,
+  Popup,
+  useMap,
+  useMapEvents,
+} from 'react-leaflet';
+import { useEffect, useState } from 'react';
 import markerIconPng from 'leaflet/dist/images/marker-icon.png';
-import { Icon, PointExpression } from 'leaflet';
+import { Icon } from 'leaflet';
 
 import { LatLngExpression } from 'leaflet';
 import { useOwnContext } from '../../contexts/cities-context';
+import { APP_ROUTE } from '../../const';
 
 export default function Map() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [position, setPosition] = useState<LatLngExpression>([40, 0]);
   const { cities } = useOwnContext();
-  const navigate = useNavigate();
 
   const lat = searchParams.get('lat');
   const lng = searchParams.get('lng');
+
+  useEffect(() => {
+    if (lat && lng) setPosition([+lat, +lng]);
+  }, [lat, lng]);
 
   return (
     <div className={styles.mapContainer}>
       <MapContainer
         className={styles.map}
         center={position}
-        zoom={11}
+        zoom={6}
         scrollWheelZoom={true}
       >
         <TileLayer
@@ -38,7 +48,6 @@ export default function Map() {
               new Icon({
                 iconUrl: markerIconPng,
                 iconSize: [22, 32],
-                iconAnchor: position as PointExpression,
               })
             }
           >
@@ -47,7 +56,30 @@ export default function Map() {
             </Popup>
           </Marker>
         ))}
+        <ChangePosition position={position} />
+        <DetectClick />
       </MapContainer>
     </div>
   );
+}
+
+type ChangePositionProps = {
+  position: LatLngExpression;
+};
+
+function ChangePosition({ position }: ChangePositionProps) {
+  const map = useMap();
+  map.setView(position);
+  return null;
+}
+
+function DetectClick() {
+  const navigate = useNavigate();
+  useMapEvents({
+    click: (e) => {
+      const query = `?lat=${e.latlng.lat}&lng=${e.latlng.lng}`;
+      navigate(`${APP_ROUTE.FORM}${query}`);
+    },
+  });
+  return null;
 }
