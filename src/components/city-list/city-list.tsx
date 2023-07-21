@@ -1,15 +1,12 @@
-import { CitiesType } from '../../types';
+import { useOwnContext } from '../../contexts/cities-context';
 import CityItem from '../city-item/city-item';
 import Message from '../message/message';
 import Spinner from '../spinner/spinner';
 import styles from './city-list.module.css';
 
-type CityListProps = {
-  cities: CitiesType;
-  isLoading: boolean;
-};
-
-export default function CityList({ cities, isLoading }: CityListProps) {
+export default function CityList() {
+  const {isLoading, cities} = useOwnContext();
+  
   if (isLoading) return <Spinner />;
 
   if (!cities.length)

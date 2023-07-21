@@ -1,18 +1,13 @@
-import { CitiesType, CityType, CountryType } from '../../types';
+import { useOwnContext } from '../../contexts/cities-context';
+import { CityType, CountryType } from '../../types';
 import CountryItem from '../country-item/country-item';
 import Message from '../message/message';
 import Spinner from '../spinner/spinner';
 import styles from './countries-list.module.css';
 
-type CountriesListProps = {
-  cities: CitiesType;
-  isLoading: boolean;
-};
+export default function CountriesList() {
+  const { isLoading, cities } = useOwnContext();
 
-export default function CountriesList({
-  cities,
-  isLoading,
-}: CountriesListProps) {
   if (isLoading) return <Spinner />;
 
   if (!cities.length)
