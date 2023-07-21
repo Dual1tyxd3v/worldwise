@@ -1,4 +1,10 @@
-import { ReactNode, createContext, useContext, useEffect, useState } from 'react';
+import {
+  ReactNode,
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+} from 'react';
 import { CitiesType, CityType, ContextType } from '../types';
 import { API_URL } from '../const';
 
@@ -37,7 +43,7 @@ export default function CitiesProvider({ children }: CitiesProviderProps) {
     async function fetchCity(url: string) {
       try {
         setIsLoading(true);
-        const resp = await fetch(`${url}/${id }`);
+        const resp = await fetch(`${url}/${id}`);
         if (!resp.ok) {
           throw new TypeError('Could not load data');
         }
@@ -52,8 +58,31 @@ export default function CitiesProvider({ children }: CitiesProviderProps) {
 
     fetchCity(API_URL);
   }
+
+  async function uploadCity(city: CityType) {
+    try {
+      setIsLoading(true);
+      const resp = await fetch(`${API_URL}`, {
+        method: 'POST',
+        body: JSON.stringify(city),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      if (!resp.ok) {
+        throw new TypeError('Could not upload data');
+      }
+      const data = await resp.json();
+      setCities((cities) => [...cities, data]);
+    } catch (e) {
+      console.log('Something went wrong');
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
   return (
-    <CitiesContext.Provider value={{ cities, isLoading, currentCity, getCity }}>
+    <CitiesContext.Provider value={{ cities, isLoading, currentCity, getCity, uploadCity }}>
       {children}
     </CitiesContext.Provider>
   );

@@ -3,20 +3,29 @@ import styles from './form.module.css';
 import Button from '../button/button';
 import ButtonBack from '../button-back/button-back';
 import { useUrlPosition } from '../../hooks/useUrlPosition';
-import { CITY_URL } from '../../const';
+import { APP_ROUTE, CITY_URL } from '../../const';
 import Spinner from '../spinner/spinner';
 import Message from '../message/message';
+import DatePicker from 'react-datepicker';
+import { useOwnContext } from '../../contexts/cities-context';
+import 'react-datepicker/dist/react-datepicker.css';
+import { useNavigate } from 'react-router-dom';
 
 export default function Form() {
   const [cityName, setCityName] = useState('');
   const [country, setCountry] = useState('');
-  const [date, setDate] = useState<Date | string>(new Date());
+  const [date, setDate] = useState(new Date());
   const [notes, setNotes] = useState('');
-  const [lat, lng] = useUrlPosition();
   const [isLoadingGeo, setIsLoadingGeo] = useState(false);
   const [geoError, setGeoError] = useState<string | null>(null);
+  const [emoji, setEmoji] = useState('');
+  const navigate = useNavigate();
+  const [lat, lng] = useUrlPosition();
+  const { uploadCity, isLoading } = useOwnContext();
 
   useEffect(() => {
+    if (!lat && !lng) return;
+
     async function loadCity() {
       try {
         setIsLoadingGeo(true);
@@ -31,6 +40,7 @@ export default function Form() {
 
         setCityName(data.city || data.locality);
         setCountry(data.countryName);
+        setEmoji(data.countryCode);
       } catch (e) {
         setGeoError((e as Error).message);
       } finally {
@@ -42,14 +52,33 @@ export default function Form() {
   }, [lat, lng]);
 
   if (isLoadingGeo) return <Spinner />;
+  if (!lat && !lng) return <Message message="Start by clicking on the map" />;
   if (geoError) return <Message message={geoError} />;
 
-  function onSubmitHandler(e: FormEvent) {
+  async function onSubmitHandler(e: FormEvent) {
     e.preventDefault();
+
+    if (!notes || !cityName || !date || !lat || !lng) return;
+
+    const newCity = {
+      cityName,
+      country,
+      emoji,
+      date,
+      notes,
+      position: {
+        lat: +lat,
+        lng: +lng,
+      },
+      id: new Date().getTime(),
+    };
+
+    await uploadCity(newCity);
+    navigate(`${APP_ROUTE.APP}/cities`);
   }
 
   return (
-    <form className={styles.form} onSubmit={onSubmitHandler}>
+    <form className={`${styles.form} ${isLoading ? styles.loading : ''}`} onSubmit={onSubmitHandler}>
       <div className={styles.row}>
         <label htmlFor="cityName">City name</label>
         <input
@@ -61,10 +90,11 @@ export default function Form() {
 
       <div className={styles.row}>
         <label htmlFor="date">When did you go to {cityName}?</label>
-        <input
+        <DatePicker
           id="date"
-          onChange={(e) => setDate(e.target.value)}
-          value={date.toString()}
+          selected={date}
+          onChange={(d) => setDate(d as Date)}
+          dateFormat="dd/MM/yyyy"
         />
       </div>
 
@@ -78,9 +108,7 @@ export default function Form() {
       </div>
 
       <div className={styles.buttons}>
-        <Button type="primary" onClick={() => console.log(123)}>
-          Add
-        </Button>
+        <Button type="primary">Add</Button>
         <ButtonBack />
       </div>
     </form>

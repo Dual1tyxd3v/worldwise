@@ -2,7 +2,7 @@ export type CityType = {
   cityName: string;
   country: string;
   emoji: string;
-  date: string;
+  date: Date;
   notes: string;
   position: {
     lat: number;
@@ -23,4 +23,5 @@ export type ContextType = {
   isLoading: boolean;
   currentCity: CityType | null;
   getCity: (id: string) => void;
+  uploadCity: (city: CityType) => void;
 };
