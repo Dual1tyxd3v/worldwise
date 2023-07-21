@@ -1,9 +1,12 @@
-import { useParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import { formatDate } from '../../utils';
-import styles from './City.module.css';
+import styles from './city.module.css';
 
 export default function City() {
   const { id } = useParams();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const lat = searchParams.get('lat');
+  const lng = searchParams.get('lng');
 
   // TEMP DATA
   const currentCity = {
