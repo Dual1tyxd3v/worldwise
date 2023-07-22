@@ -1,6 +1,7 @@
 import {
   ReactNode,
   createContext,
+  useCallback,
   useContext,
   useEffect,
   useReducer,
@@ -32,14 +33,14 @@ export default function CitiesProvider({ children }: CitiesProviderProps) {
         const data = await resp.json();
         dispatch({ type: 'cities/loaded', payload: data });
       } catch (e) {
-        dispatch({type: 'rejected', payload: 'Something went wrong'});
-      } 
+        dispatch({ type: 'rejected', payload: 'Something went wrong' });
+      }
     }
 
     fetchCities(API_URL);
   }, []);
 
-  function getCity(id: number) {
+  const getCity = useCallback(function getCity(id: number) {
     async function fetchCity(url: string) {
       try {
         dispatch({ type: 'loading' });
@@ -50,12 +51,12 @@ export default function CitiesProvider({ children }: CitiesProviderProps) {
         const data = await resp.json();
         dispatch({ type: 'currentCity/loaded', payload: data });
       } catch (e) {
-        dispatch({type: 'rejected', payload: 'Something went wrong'});
-      } 
+        dispatch({ type: 'rejected', payload: 'Something went wrong' });
+      }
     }
 
     fetchCity(API_URL);
-  }
+  }, []);
 
   async function uploadCity(city: CityType) {
     try {
@@ -73,8 +74,8 @@ export default function CitiesProvider({ children }: CitiesProviderProps) {
       const data = await resp.json();
       dispatch({ type: 'city/added', payload: data });
     } catch (e) {
-      dispatch({type: 'rejected', payload: 'Something went wrong'});
-    } 
+      dispatch({ type: 'rejected', payload: 'Something went wrong' });
+    }
   }
 
   async function deleteCity(id: number) {
@@ -86,8 +87,8 @@ export default function CitiesProvider({ children }: CitiesProviderProps) {
 
       dispatch({ type: 'city/deleted', payload: id });
     } catch (e) {
-      dispatch({type: 'rejected', payload: 'Cant delete city'});
-    } 
+      dispatch({ type: 'rejected', payload: 'Cant delete city' });
+    }
   }
 
   return (
