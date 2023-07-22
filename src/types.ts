@@ -26,3 +26,15 @@ export type ContextType = {
   uploadCity: (city: CityType) => void;
   deleteCity: (id: number) => void;
 };
+
+export type InitState = {
+  cities: CitiesType;
+  isLoading: boolean;
+  currentCity: CityType | null;
+  error: string | null;
+} 
+
+export type ActionType = {
+  type: string;
+  payload?: CitiesType | CityType | boolean | number | string;
+}

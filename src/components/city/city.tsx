@@ -1,4 +1,4 @@
-import { useParams, useSearchParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { formatDate } from '../../utils';
 import styles from './city.module.css';
 import { useOwnContext } from '../../contexts/cities-context';
@@ -11,7 +11,7 @@ export default function City() {
   const { getCity, currentCity, isLoading } = useOwnContext();
 
   useEffect(() => {
-    getCity(id as string);
+    getCity(Number(id));
   }, [id]);
 
   if (isLoading) return <Spinner />;
@@ -31,7 +31,7 @@ export default function City() {
 
       <div className={styles.row}>
         <h6>You went to {cityName} on</h6>
-        <p>{formatDate(date || '')}</p>
+        <p>{formatDate(date.toString() || '')}</p>
       </div>
 
       {notes && (

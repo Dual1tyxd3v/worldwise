@@ -3,10 +3,11 @@ import {
   createContext,
   useContext,
   useEffect,
-  useState,
+  useReducer,
 } from 'react';
-import { CitiesType, CityType, ContextType } from '../types';
+import { CityType, ContextType } from '../types';
 import { API_URL } from '../const';
+import { initState, reducer } from '../store/store';
 
 const CitiesContext = createContext<ContextType | null>(null);
 
@@ -15,25 +16,24 @@ type CitiesProviderProps = {
 };
 
 export default function CitiesProvider({ children }: CitiesProviderProps) {
-  const [cities, setCities] = useState<CitiesType>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [currentCity, setCurrentCity] = useState<CityType | null>(null);
+  const [{ cities, isLoading, currentCity }, dispatch] = useReducer(
+    reducer,
+    initState
+  );
 
   useEffect(() => {
     async function fetchCities(url: string) {
       try {
-        setIsLoading(true);
+        dispatch({ type: 'loading' });
         const resp = await fetch(url);
         if (!resp.ok) {
           throw new TypeError('Could not load data');
         }
         const data = await resp.json();
-        setCities(data);
+        dispatch({ type: 'cities/loaded', payload: data });
       } catch (e) {
-        console.log('Something went wrong');
-      } finally {
-        setIsLoading(false);
-      }
+        dispatch({type: 'rejected', payload: 'Something went wrong'});
+      } 
     }
 
     fetchCities(API_URL);
@@ -42,18 +42,16 @@ export default function CitiesProvider({ children }: CitiesProviderProps) {
   function getCity(id: number) {
     async function fetchCity(url: string) {
       try {
-        setIsLoading(true);
+        dispatch({ type: 'loading' });
         const resp = await fetch(`${url}/${id}`);
         if (!resp.ok) {
           throw new TypeError('Could not load data');
         }
         const data = await resp.json();
-        setCurrentCity(data);
+        dispatch({ type: 'currentCity/loaded', payload: data });
       } catch (e) {
-        console.log('Something went wrong');
-      } finally {
-        setIsLoading(false);
-      }
+        dispatch({type: 'rejected', payload: 'Something went wrong'});
+      } 
     }
 
     fetchCity(API_URL);
@@ -61,7 +59,7 @@ export default function CitiesProvider({ children }: CitiesProviderProps) {
 
   async function uploadCity(city: CityType) {
     try {
-      setIsLoading(true);
+      dispatch({ type: 'loading' });
       const resp = await fetch(`${API_URL}`, {
         method: 'POST',
         body: JSON.stringify(city),
@@ -73,27 +71,23 @@ export default function CitiesProvider({ children }: CitiesProviderProps) {
         throw new TypeError('Could not upload data');
       }
       const data = await resp.json();
-      setCities((cities) => [...cities, data]);
+      dispatch({ type: 'city/added', payload: data });
     } catch (e) {
-      console.log('Something went wrong');
-    } finally {
-      setIsLoading(false);
-    }
+      dispatch({type: 'rejected', payload: 'Something went wrong'});
+    } 
   }
 
   async function deleteCity(id: number) {
     try {
-      setIsLoading(true);
+      dispatch({ type: 'loading' });
       await fetch(`${API_URL}/${id}`, {
         method: 'DELETE',
       });
 
-      setCities((cities) => cities.filter((city) => city.id !== id));
+      dispatch({ type: 'city/deleted', payload: id });
     } catch (e) {
-      console.log('Cant delete city');
-    } finally {
-      setIsLoading(false);
-    }
+      dispatch({type: 'rejected', payload: 'Cant delete city'});
+    } 
   }
 
   return (

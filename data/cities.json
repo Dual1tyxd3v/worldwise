@@ -35,6 +35,18 @@
         "lng": 13.376933665713324
       },
       "id": 98443197
+    },
+    {
+      "cityName": "Villanueva de Azoague",
+      "country": "Spain",
+      "emoji": "ES",
+      "date": "2023-07-22T03:56:50.992Z",
+      "notes": "rqwrqrw",
+      "position": {
+        "lat": 41.95131994679697,
+        "lng": -5.625
+      },
+      "id": 1689998213800
     }
   ]
 }
