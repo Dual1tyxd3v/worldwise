@@ -27,14 +27,38 @@ export type ContextType = {
   deleteCity: (id: number) => void;
 };
 
+export type AuthContextType = {
+  isAuth: boolean;
+  user: null | User;
+  login: (e: string, p: string) => void;
+  logout: () => void;
+};
+
+export type User = {
+  name: string;
+  email: string;
+  password: string;
+  avatar: string;
+};
+
 export type InitState = {
   cities: CitiesType;
   isLoading: boolean;
   currentCity: CityType | null;
   error: string | null;
-} 
+};
+
+export type AuthInitState = {
+  user: null | User;
+  isAuth: boolean;
+}
+
+export type AuthActionType = {
+  type: string;
+  payload?: User;
+}
 
 export type ActionType = {
   type: string;
   payload?: CitiesType | CityType | boolean | number | string;
-}
+};
