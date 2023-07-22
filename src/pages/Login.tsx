@@ -1,16 +1,33 @@
-import { useState } from 'react';
-import styles from "./Login.module.css";
+import { FormEvent, useEffect, useState } from 'react';
+import styles from './Login.module.css';
 import NavPage from '../components/nav-page/nav-page';
+import { useAuth } from '../contexts/fakeAuthContext';
+import { useNavigate } from 'react-router-dom';
+import { APP_ROUTE } from '../const';
+import Button from '../components/button/button';
 
 export default function Login() {
-  // PRE-FILL FOR DEV PURPOSES
-  const [email, setEmail] = useState("jack@example.com");
-  const [password, setPassword] = useState("qwerty");
+  const [email, setEmail] = useState('jack@example.com');
+  const [password, setPassword] = useState('qwerty');
+  const { isAuth, login } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    isAuth && navigate(APP_ROUTE.APP);
+  }, [isAuth]);
+
+  function onSubmitHandler(e: FormEvent) {
+    e.preventDefault();
+
+    if (!email || !password) return;
+
+    login(email, password);
+  }
 
   return (
     <main className={styles.login}>
       <NavPage />
-      <form className={styles.form}>
+      <form className={styles.form} onSubmit={onSubmitHandler}>
         <div className={styles.row}>
           <label htmlFor="email">Email address</label>
           <input
@@ -32,7 +49,7 @@ export default function Login() {
         </div>
 
         <div>
-          <button>Login</button>
+          <Button type='back'>Login</Button>
         </div>
       </form>
     </main>

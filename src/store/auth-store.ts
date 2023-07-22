@@ -11,7 +11,7 @@ export const authReducer = (
 ): AuthInitState => {
   switch (action.type) {
     case 'login':
-      return { isAuth: true, user: action.payload as User };
+      return { ...state, isAuth: true, user: action.payload as User };
     case 'logout':
       return authInitState;
     default:

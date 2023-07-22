@@ -1,4 +1,4 @@
-import { ReactNode, createContext, useReducer } from 'react';
+import { ReactNode, createContext, useContext, useReducer } from 'react';
 import { authInitState, authReducer } from '../store/auth-store';
 import { AuthContextType } from '../types';
 import { FAKE_USER } from '../const';
@@ -18,7 +18,7 @@ export default function AuthProvider({ children }: AuthProviderProps) {
   }
 
   function logout() {
-    dispatch({type: 'logout'});
+    dispatch({ type: 'logout' });
   }
 
   return (
@@ -26,4 +26,11 @@ export default function AuthProvider({ children }: AuthProviderProps) {
       {children}
     </AuthContext.Provider>
   );
+}
+
+export function useAuth() {
+  const context = useContext(AuthContext);
+  if (!context)
+    throw new Error('Use context inside according provider');
+  return context;
 }
