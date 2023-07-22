@@ -49,7 +49,7 @@ export default function Login() {
         </div>
 
         <div>
-          <Button type='back'>Login</Button>
+          <Button type="back">Login</Button>
         </div>
       </form>
     </main>
